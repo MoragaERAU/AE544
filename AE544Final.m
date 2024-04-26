@@ -67,7 +67,7 @@ clc;clear;close all
 %phi = (x/L)^i+1
 
 %Linear Case
-
+%Constants
 EI = 1.4*10^4;
 rho = 1.2;
 L = 10;
@@ -84,7 +84,7 @@ for i = 1:n
     end
 end
 
-tspan = (0:0.01:10);
+tspan = (0:0.001:10);
 cond0 = [0.1; 0; 0; 0; 0; 1];  % Ensure initial condition is a column vector
 
 options = odeset('RelTol',1e-12,'AbsTol',1e-12);
@@ -95,7 +95,7 @@ plot(tspan, q(:,1))
 grid on
 grid minor
 xlabel('Timespan (s)')
-ylabel('Deflection')
+ylabel('\delta y')
 title('Deflection of Beam')
 
 subplot(3,1,2)
@@ -103,8 +103,8 @@ plot(tspan, q(:,2))
 grid on
 grid minor
 xlabel('Timespan (s)')
-ylabel('')
-title(' of Beam')
+ylabel('\delta u')
+title(' Axial deflection of Beam')
 
 subplot(3,1,3)
 plot(tspan, q(:,3))
@@ -125,19 +125,20 @@ modes = modes ./ max(abs(modes));
 end
 
 function solutions = linbeam(~, q, m, k, omega)
-    y = q(1);
-    u = q(2);
-    theta = q(3);
+y = q(1);
+u = q(2);
+theta = q(3);
 
-    dy = q(4);
-    du = q(5);
-    dtheta = q(6);
+dy = q(4);
+du = q(5);
+dtheta = q(6);
 
-    dq = [dy; du; dtheta];
-    q = [y; u; theta];
+dq = [dy; du; dtheta];
+q = [y; u; theta];
 
-    ddq = inv(m) * ((omega^2 * m - k) * q);
+%     ddq = inv(m) * ((omega^2 * m - k) * q);
+ddq =     (((omega^2 * m - k)/m) * q);
 
-    solutions = [dq; ddq];
+
+solutions = [dq; ddq];
 end
-
