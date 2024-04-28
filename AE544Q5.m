@@ -19,7 +19,7 @@ k = zeros(3,3);
 for i = 1:n
     for j = 1:n
         m(i,j) = rho*L/(i+j+3);
-        k(i,j) = (EI/(rho*L^4))*i*j*(i+1)*(j+1)/(i+j-1);
+        k(i,j) =   
     end
 end
 
@@ -66,8 +66,8 @@ dtheta = q(6);
 dq = [dy; du; dtheta];
 q = [y; u; theta];
 
-%     ddq = inv(m) * ((omega^2 * m - k) * q);
-ddq =     (((omega^2 * m - k)/m) * q);
+%   ddq = inv(m) * ((omega^2 * m - k) * q);
+ ddq =     (((omega^2 * m - k)/m) * q);
 
 
 solutions = [dq; ddq];

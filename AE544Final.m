@@ -2,11 +2,11 @@ clc
 clear
 close all
 
-tspan = (0:0.01:5);
+tspan = (0:0.01:10);
 reference = sin(2*pi*(1/5)*tspan);
 
 % Define mass matrix M and stiffness matrix K
-m = [1, 1, 1, 1, 1]; % Masses
+m = 2; % Masses
 L = 10;
 n = 5;
 EA = 1;
@@ -19,51 +19,57 @@ K = [3*k -k 0 0 0;...
     0 0 0 -k 3*k;];
 
 % Mass matrix
-M = diag(m);
+M = [m,m,0,0,0;
+    m,m,m,0,0;
+    0,m,m,m,0;
+    0,0,m,m,m;
+    0,0,0,m,m];
 
 % Calculate mode shapes and frequencies
-[modes, frequencies, eigenvalues] = mode_shapes(M, K);
+[modes, frequencies, eigenvalues] = mode_shapes(K);
 modes = modes*1;
+A=[0.632456,-0.632456,-0.632456,-0.632456,0.632456];
+x=[0,1,3,5,7,9,10];
+
+
 
 figure
-plot(tspan,reference,'r')
-hold on
-for i = 1:5
-    subplot(5,1,i)
-    if i ==1
-        plot(modes(:,i),'o-')
-%     elseif i ==5
-%         plot(modes(:,i),'o-')
-    else
-        plot(modes(:,1),'o-')
-
-
-    end
+for i = 1:4
+    eigen = (i*pi)/10;
+    mshape = [0;modes(:,1);0];
+    subplot(4, 1, i)
+    plot(x,mshape, 'o-')
+    hold on
     title(['Mode Shape ', num2str(i)])
     xlabel('Mass Index')
     ylabel('Displacement')
-    grid on
-    grid minor
 end
 
-
-
-% modes = [zeros(1,5);modes;zeros(1,5)]
-% Plot mode shapes
-figure;
-for i = 1:5
-    subplot(5, 1, i)
-    plot(modes(:, i), 'o-')
+figure
+for n=1:4
+    subplot(4,1,n)
     hold on
-    plot(tspan,reference,'r')
-    title(['Mode Shape ', num2str(i)])
-    xlabel('Mass Index')
-    ylabel('Displacement')
+    mshape=[0;modes(:,n);0];
+    A=[0.632456,-0.632456,-0.632456,-0.632456,0.632456];
+    beta=(pi/10)*n;
+    l=10;
+
+    vect=sin(beta*tspan);
+    norm_vect=norm(mshape);
+    plot(x,mshape, 'o-')
+    plot(tspan,(A(n)*vect))
+    xlabel('Mass location (x)');
+    ylabel('Displacement');
+    title(['Mode Shape ',num2str(n)]);
+
+    %frequency1=[frequency1;(beta^2*l^2)];
+    %frequency2=[];
+    hold off
 end
 
 
 %% Question 5
-clc;clear;close all
+% clc;clear;close all
 %phi = (x/L)^i+1
 
 %Linear Case
@@ -115,8 +121,8 @@ ylabel('\theta')
 title('Angle of rotation')
 
 %% Functions
-function [modes, frequencies, eigenvalues] = mode_shapes(M, K)
-[eigenvectors, eigenvalues] = eig(K, M);
+function [modes, frequencies, eigenvalues] = mode_shapes(K)
+[eigenvectors, eigenvalues] = eig(K);
 frequencies = sqrt(diag(eigenvalues));
 modes = eigenvectors;
 
